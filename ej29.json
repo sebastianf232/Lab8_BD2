@@ -1,0 +1,100 @@
+[
+    {
+      $lookup:
+        /**
+         * from: The target collection.
+         * localField: The local join field.
+         * foreignField: The target join field.
+         * as: The name for the results.
+         * pipeline: Optional pipeline to run on the foreign collection.
+         * let: Optional variables to use in the pipeline field stages.
+         */
+        {
+          from: "transactions",
+          let: {
+            acctIds: "$accounts"
+          },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $in: ["$account_id", "$$acctIds"]
+                }
+              }
+            },
+            {
+              $unwind: "$transactions"
+            },
+            {
+              $group: {
+                _id: null,
+                total_balance: {
+                  $sum: "$transactions.amount"
+                },
+                transactions_count: {
+                  $sum: 1
+                }
+              }
+            }
+          ],
+          as: "summary"
+        }
+    },
+    {
+      $unwind:
+        /**
+         * path: Path to the array field.
+         * includeArrayIndex: Optional name for index.
+         * preserveNullAndEmptyArrays: Optional
+         *   toggle to unwind null and empty values.
+         */
+        {
+          path: "$summary"
+        }
+    },
+    {
+      $match:
+        /**
+         * query: The query in MQL.
+         */
+        {
+          "summary.total_balance": {
+            $gt: 30000
+          },
+          "summary.transactions_count": {
+            $gt: 5
+          }
+        }
+    },
+    {
+      $project:
+        /**
+         * specifications: The fields to
+         *   include or exclude.
+         */
+        {
+          _id: 0,
+          name: 1,
+          email: 1,
+          total_balance: "$summary.total_balance",
+          num_transactions:
+            "$summary.transactions_count"
+        }
+    },
+    {
+      $merge:
+        /**
+         * into: The target collection.
+         * on: Fields to  identify.
+         * let: Defined variables.
+         * whenMatched: Action for matching docs.
+         * whenNotMatched: Action for non-matching docs.
+         */
+        {
+          into: "high_value_customers",
+          on: "email",
+          whenMatched: "replace",
+          whenNotMatched: "insert"
+        }
+    }
+  ]
