@@ -1,0 +1,108 @@
+db.getCollection('customers').aggregate(
+  [
+    {
+      $lookup: {
+        from: 'transactions',
+        localField: 'accounts',
+        foreignField: 'account_id',
+        as: 'accounts_transactions'
+      }
+    },
+    {
+      $unwind: { path: '$accounts_transactions' }
+    },
+    {
+      $unwind: {
+        path: '$accounts_transactions.transactions'
+      }
+    },
+    {
+      $project: {
+        customer_id: '$_id',
+        username: '$username',
+        transaction_date:
+          '$accounts_transactions.transactions.date',
+        total_value: {
+          $toDouble:
+            '$accounts_transactions.transactions.total'
+        }
+      }
+    },
+    {
+      $group: {
+        _id: '$customer_id',
+        username: { $first: '$username' },
+        transactions: {
+          $push: {
+            date: '$transaction_date',
+            total_value: '$total_value'
+          }
+        }
+      }
+    },
+    {
+      $match: {
+        'transactions.1': { $exists: true }
+      }
+    },
+    {
+      $project: {
+        oldest: {
+          $arrayElemAt: [
+            {
+              $slice: [
+                {
+                  $sortArray: {
+                    input: '$transactions',
+                    sortBy: { date: 1 }
+                  }
+                },
+                1
+              ]
+            },
+            0
+          ]
+        },
+        newest: {
+          $arrayElemAt: [
+            {
+              $slice: [
+                {
+                  $sortArray: {
+                    input: '$transactions',
+                    sortBy: { date: -1 }
+                  }
+                },
+                1
+              ]
+            },
+            0
+          ]
+        },
+        username: 1
+      }
+    },
+    {
+      $project: {
+        username: 1,
+        variation_percentage: {
+          $multiply: [
+            {
+              $divide: [
+                {
+                  $subtract: [
+                    '$newest.total_value',
+                    '$oldest.total_value'
+                  ]
+                },
+                '$oldest.total_value'
+              ]
+            },
+            100
+          ]
+        }
+      }
+    }
+  ],
+  { maxTimeMS: 60000, allowDiskUse: true }
+);

@@ -1,0 +1,192 @@
+[{
+  "_id": {
+    "month": 8,
+    "transaction_code": "sell"
+  },
+  "total_sum": 1732001446.209301,
+  "average": 438370.39893933205
+},
+{
+  "_id": {
+    "month": 4,
+    "transaction_code": "buy"
+  },
+  "total_sum": 1294818139.7305083,
+  "average": 370477.29319900094
+},
+{
+  "_id": {
+    "month": 10,
+    "transaction_code": "sell"
+  },
+  "total_sum": 1698470571.6330938,
+  "average": 441390.4811936315
+},
+{
+  "_id": {
+    "month": 6,
+    "transaction_code": "sell"
+  },
+  "total_sum": 1581052932.5324054,
+  "average": 413671.6202334917
+},
+{
+  "_id": {
+    "month": 10,
+    "transaction_code": "buy"
+  },
+  "total_sum": 1644290853.2451437,
+  "average": 418607.6510298227
+},
+{
+  "_id": {
+    "month": 9,
+    "transaction_code": "buy"
+  },
+  "total_sum": 1735625355.9988332,
+  "average": 472664.8572981572
+},
+{
+  "_id": {
+    "month": 5,
+    "transaction_code": "buy"
+  },
+  "total_sum": 1388944635.2088182,
+  "average": 385603.72993026604
+},
+{
+  "_id": {
+    "month": 9,
+    "transaction_code": "sell"
+  },
+  "total_sum": 1595732787.9732883,
+  "average": 438267.72534284217
+},
+{
+  "_id": {
+    "month": 7,
+    "transaction_code": "buy"
+  },
+  "total_sum": 1506585604.2845852,
+  "average": 405868.9666714939
+},
+{
+  "_id": {
+    "month": 2,
+    "transaction_code": "sell"
+  },
+  "total_sum": 1113573953.480551,
+  "average": 347991.8604626722
+},
+{
+  "_id": {
+    "month": 12,
+    "transaction_code": "buy"
+  },
+  "total_sum": 1818674293.8655517,
+  "average": 449832.87011267664
+},
+{
+  "_id": {
+    "month": 8,
+    "transaction_code": "buy"
+  },
+  "total_sum": 1677816923.8525527,
+  "average": 431204.5550893222
+},
+{
+  "_id": {
+    "month": 3,
+    "transaction_code": "buy"
+  },
+  "total_sum": 1294678720.6449924,
+  "average": 353737.35536748427
+},
+{
+  "_id": {
+    "month": 3,
+    "transaction_code": "sell"
+  },
+  "total_sum": 1241345667.3771837,
+  "average": 339165.4828899409
+},
+{
+  "_id": {
+    "month": 5,
+    "transaction_code": "sell"
+  },
+  "total_sum": 1275651878.1780083,
+  "average": 362195.30896593083
+},
+{
+  "_id": {
+    "month": 7,
+    "transaction_code": "sell"
+  },
+  "total_sum": 1496546286.26716,
+  "average": 417796.2831566611
+},
+{
+  "_id": {
+    "month": 4,
+    "transaction_code": "sell"
+  },
+  "total_sum": 1328682950.8757071,
+  "average": 372702.09000721097
+},
+{
+  "_id": {
+    "month": 1,
+    "transaction_code": "sell"
+  },
+  "total_sum": 1277768414.860446,
+  "average": 370905.20024976664
+},
+{
+  "_id": {
+    "month": 6,
+    "transaction_code": "buy"
+  },
+  "total_sum": 1438303001.4695923,
+  "average": 388940.77919675293
+},
+{
+  "_id": {
+    "month": 2,
+    "transaction_code": "buy"
+  },
+  "total_sum": 1021104167.5166696,
+  "average": 331419.7233095325
+},
+{
+  "_id": {
+    "month": 12,
+    "transaction_code": "sell"
+  },
+  "total_sum": 1838160332.678316,
+  "average": 447240.95685603796
+},
+{
+  "_id": {
+    "month": 11,
+    "transaction_code": "sell"
+  },
+  "total_sum": 1656125982.4658563,
+  "average": 448328.6362928685
+},
+{
+  "_id": {
+    "month": 11,
+    "transaction_code": "buy"
+  },
+  "total_sum": 1710110640.271536,
+  "average": 458474.7024856665
+},
+{
+  "_id": {
+    "month": 1,
+    "transaction_code": "buy"
+  },
+  "total_sum": 1338810960.6186101,
+  "average": 375332.4812499608
+}]
