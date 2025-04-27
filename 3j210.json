@@ -1,0 +1,237 @@
+[
+    {
+      $lookup:
+        /**
+         * from: The target collection.
+         * localField: The local join field.
+         * foreignField: The target join field.
+         * as: The name for the results.
+         * pipeline: Optional pipeline to run on the foreign collection.
+         * let: Optional variables to use in the pipeline field stages.
+         */
+        {
+          from: "transactions",
+          let: {
+            acctIds: "$accounts"
+          },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $in: ["$account_id", "$$acctIds"]
+                }
+              }
+            },
+            {
+              $unwind: "$transactions"
+            },
+            {
+              $group: {
+                _id: null,
+                lastTxDate: {
+                  $max: "$transactions.date"
+                }
+              }
+            }
+          ],
+          as: "lastTx"
+        }
+    },
+    {
+      $addFields:
+        /**
+         * newField: The new field name.
+         * expression: The new field expression.
+         */
+        {
+          lastTxDate: {
+            $ifNull: [
+              {
+                $arrayElemAt: [
+                  "$lastTx.lastTxDate",
+                  0
+                ]
+              },
+              new Date()
+            ]
+          }
+        }
+    },
+    {
+      $addFields:
+        /**
+         * newField: The new field name.
+         * expression: The new field expression.
+         */
+        {
+          startDate: {
+            $dateSubtract: {
+              startDate: "$lastTxDate",
+              unit: "year",
+              amount: 1
+            }
+          }
+        }
+    },
+    {
+      $lookup:
+        /**
+         * from: The target collection.
+         * localField: The local join field.
+         * foreignField: The target join field.
+         * as: The name for the results.
+         * pipeline: Optional pipeline to run on the foreign collection.
+         * let: Optional variables to use in the pipeline field stages.
+         */
+        {
+          from: "transactions",
+          let: {
+            acctIds: "$accounts",
+            start: "$startDate",
+            end: "$lastTxDate"
+          },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $in: ["$account_id", "$$acctIds"]
+                }
+              }
+            },
+            {
+              $unwind: "$transactions"
+            },
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    {
+                      $gte: [
+                        "$transactions.date",
+                        "$$start"
+                      ]
+                    },
+                    {
+                      $lte: [
+                        "$transactions.date",
+                        "$$end"
+                      ]
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              $count: "countTx"
+            }
+          ],
+          as: "txCount"
+        }
+    },
+    {
+      $addFields:
+        /**
+         * newField: The new field name.
+         * expression: The new field expression.
+         */
+        {
+          total_transactions_last_year: {
+            $ifNull: [
+              {
+                $arrayElemAt: [
+                  "$txCount.countTx",
+                  0
+                ]
+              },
+              0
+            ]
+          }
+        }
+    },
+    {
+      $addFields:
+        /**
+         * newField: The new field name.
+         * expression: The new field expression.
+         */
+        {
+          average_transactions_per_month: {
+            $round: [
+              {
+                $divide: [
+                  "$total_transactions_last_year",
+                  12
+                ]
+              },
+              1
+            ]
+          }
+        }
+    },
+    {
+      $addFields:
+        /**
+         * newField: The new field name.
+         * expression: The new field expression.
+         */
+        {
+          category: {
+            $switch: {
+              branches: [
+                {
+                  case: {
+                    $lt: [
+                      "$average_transactions_per_month",
+                      2
+                    ]
+                  },
+                  then: "infrequent"
+                },
+                {
+                  case: {
+                    $and: [
+                      {
+                        $gte: [
+                          "$average_transactions_per_month",
+                          2
+                        ]
+                      },
+                      {
+                        $lte: [
+                          "$average_transactions_per_month",
+                          5
+                        ]
+                      }
+                    ]
+                  },
+                  then: "regular"
+                },
+                {
+                  case: {
+                    $gt: [
+                      "$average_transactions_per_month",
+                      5
+                    ]
+                  },
+                  then: "frequent"
+                }
+              ],
+              default: "unknown"
+            }
+          }
+        }
+    },
+    {
+      $project:
+        /**
+         * specifications: The fields to
+         *   include or exclude.
+         */
+        {
+          _id: 0,
+          fullName: "$name",
+          average_transactions_per_month: 1,
+          category: 1
+        }
+    }
+  ]
